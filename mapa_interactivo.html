@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa Interactivo</title>
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        #search-box {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 300px;
+            height: 30px;
+            padding: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <input id="search-box" type="text" placeholder="Buscar dirección">
+    <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: { lat: -33.4489, lng: -70.6693 }, // Coordenadas de Santiago, Chile
+                mapTypeId: 'roadmap'
+            });
+
+            const imageBounds = {
+                north: -33.396,
+                south: -33.513,
+                east: -70.559,
+                west: -70.722
+            };
+
+            const historicalOverlay = new google.maps.GroundOverlay(
+                'URL_DE_LA_IMAGEN_DEL_MAPA',
+                imageBounds
+            );
+            historicalOverlay.setMap(map);
+
+            const input = document.getElementById('search-box');
+            const searchBox = new google.maps.places.SearchBox(input);
+
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+
+            searchBox.addListener('places_changed', () => {
+                const places = searchBox.getPlaces();
+
+                if (places.length === 0) {
+                    return;
+                }
+
+                places.forEach(place => {
+                    if (!place.geometry) {
+                        return;
+                    }
+
+                    new google.maps.Marker({
+                        map,
+                        title: place.name,
+                        position: place.geometry.location
+                    });
+
+                    map.setCenter(place.geometry.location);
+                });
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</body>
+</html>
