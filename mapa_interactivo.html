@@ -30,6 +30,7 @@
     <input id="search-box" type="text" placeholder="Buscar dirección">
     <div id="map"></div>
 
+    <!-- Reemplaza YOUR_API_KEY con tu clave de API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHB3N2CLyuGYEWdSCCHvmFfVx83ejvQSQ&libraries=places"></script>
     <script>
         function initMap() {
@@ -39,18 +40,25 @@
                 mapTypeId: 'roadmap'
             });
 
-            const imageBounds = {
-                north: -33.396,
-                south: -33.513,
-                east: -70.559,
-                west: -70.722
-            };
+            const locations = [
+                { name: "Las Rejas", lat: -33.456, lng: -70.719 },
+                { name: "Ciudad del Niño", lat: -33.501, lng: -70.651 },
+                { name: "Florida Center", lat: -33.511, lng: -70.602 },
+                { name: "Portal el Llano", lat: -33.482, lng: -70.640 },
+                { name: "Alto San Francisco", lat: -33.443, lng: -70.653 },
+                { name: "Nathaniel Cox", lat: -33.451, lng: -70.655 },
+                { name: "Vicuña Mackenna", lat: -33.458, lng: -70.641 },
+                { name: "Ñuble", lat: -33.464, lng: -70.631 },
+                { name: "Independencia", lat: -33.416, lng: -70.657 }
+            ];
 
-            const historicalOverlay = new google.maps.GroundOverlay(
-                'URL_DE_LA_IMAGEN_DEL_MAPA',
-                imageBounds
-            );
-            historicalOverlay.setMap(map);
+            locations.forEach(location => {
+                new google.maps.Marker({
+                    position: { lat: location.lat, lng: location.lng },
+                    map: map,
+                    title: location.name
+                });
+            });
 
             const input = document.getElementById('search-box');
             const searchBox = new google.maps.places.SearchBox(input);
